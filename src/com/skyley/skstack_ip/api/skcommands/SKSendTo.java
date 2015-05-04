@@ -3,6 +3,8 @@ package com.skyley.skstack_ip.api.skcommands;
 import com.skyley.skstack_ip.api.SKUtil;
 import com.skyley.skstack_ip.api.skenums.SKSecOption;
 
+import java.io.OutputStream;
+
 /**
 * SKSENDTOコマンドに対応したクラス、SKCommandを継承
 * @author Skyley Networks, Inc.
@@ -70,7 +72,7 @@ public class SKSendTo extends SKCommand {
 		String portString, lenString;
 
 		portString = SKUtil.toPaddingHexString(port, 4);
-		lenString = SKUtil.toPaddingHexString(data.length(), 4);
+		lenString = SKUtil.toPaddingHexString(data.length()/2, 4);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("SKSENDTO ");
@@ -84,9 +86,22 @@ public class SKSendTo extends SKCommand {
 		sb.append(" ");
 		sb.append(lenString);
 		sb.append(" ");
-		sb.append(data);
-		sb.append("\r\n");
+		
+        //sb.append(data);
+		//sb.append("\r\n");
 		commandString = sb.toString();
 	}
 
+ 	public boolean sendCommand(OutputStream out) {
+		try {
+			byte[] commandByte = commandString.getBytes("US-ASCII");
+			out.write(commandByte);
+            out.write(SKUtil.toByteArray((data)));
+			return true;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }
