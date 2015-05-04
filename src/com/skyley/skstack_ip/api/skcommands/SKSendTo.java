@@ -87,7 +87,7 @@ public class SKSendTo extends SKCommand {
 		sb.append(lenString);
 		sb.append(" ");
 		
-        //sb.append(data);
+		//sb.append(data);
 		//sb.append("\r\n");
 		commandString = sb.toString();
 	}
@@ -96,7 +96,7 @@ public class SKSendTo extends SKCommand {
 		try {
 			byte[] commandByte = commandString.getBytes("US-ASCII");
 			out.write(commandByte);
-            out.write(SKUtil.toByteArray((data)));
+			out.write(SKUtil.toByteArray((data)));
 			return true;
 		}
 		catch(Exception e) {
