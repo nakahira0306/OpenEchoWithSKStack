@@ -1,6 +1,5 @@
 package com.skyley.skstack_ip.api.skevents;
 
-import com.skyley.skstack_ip.api.SKUtil;
 
 /**
 * ERXTCPイベントに対応したクラス、SKEventを実装
@@ -79,7 +78,7 @@ public class SKERxTcp implements SKEvent {
 			rport = Integer.parseInt(ary[2], 16);
 			lport = Integer.parseInt(ary[3], 16);
 			dataLength = Integer.parseInt(ary[4], 16);
-			data = new String(SKUtil.toAsciiString(ary[5]));
+			data = ary[5];
 			return true;
 		}
 		catch (NumberFormatException e) {

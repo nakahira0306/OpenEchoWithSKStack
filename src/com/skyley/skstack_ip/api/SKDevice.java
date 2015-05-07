@@ -858,7 +858,7 @@ public class SKDevice {
 	 * @param data 送信データ
 	 * @return 送信処理開始に成功:true, 失敗:false
 	 */
-	public boolean sendUDP(byte handle, String ip6Address, int port, SKSecOption sec, String data) {
+	public boolean sendUDP(byte handle, String ip6Address, int port, SKSecOption sec, byte[] data) {
 		SKSendTo sksendto = new SKSendTo(handle, ip6Address, port, sec, data);
 		return sendCommandAndWaitOK(sksendto);
 	}
@@ -883,7 +883,7 @@ public class SKDevice {
 	 * @param data 送信データ
 	 * @return 送信処理開始に成功:true, 失敗:false
 	 */
-	public boolean sendTCP(byte handle, String data) {
+	public boolean sendTCP(byte handle, byte[] data) {
 		SKSend sksend = new SKSend(handle, data);
 		return sendCommandAndWaitOK(sksend);
 	}

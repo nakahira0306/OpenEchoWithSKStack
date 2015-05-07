@@ -1,6 +1,5 @@
 package com.skyley.skstack_ip.echo;
 import com.skyley.skstack_ip.api.SKDevice;
-import com.skyley.skstack_ip.api.SKUtil;
 import com.skyley.skstack_ip.api.skenums.SKSecOption;
 import com.sonycsl.echo.eoj.device.managementoperation.Controller;
 
@@ -139,7 +138,7 @@ public class SKController extends Controller implements SKEchoDevice {
 	public boolean sendEchoMessage(byte[] data) {
 		// TODO 自動生成されたメソッド・スタブ
 		if (device != null) {
-			return device.sendUDP((byte)1, PAA_IP6_ADDRESS, 3610, SKSecOption.SEC_OR_NO_TX, SKUtil.toHexString(data));
+			return device.sendUDP((byte)1, PAA_IP6_ADDRESS, 3610, SKSecOption.SEC_OR_NO_TX, data);
 		}
 		else {
 			return false;

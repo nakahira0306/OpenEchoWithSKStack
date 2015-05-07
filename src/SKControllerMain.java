@@ -19,7 +19,6 @@ public class SKControllerMain {
 		// TODO 自動生成されたメソッド・スタブ
 		SmartMeterEventListener listener = null;
 		SmartElectricEnergyMeter device = null;
-		SmartMeterReceiver receiver = null;
 
 		final long WAIT_TIME_MSEC = 1000;
 		final int NUM_OF_REQUESTS = 100;

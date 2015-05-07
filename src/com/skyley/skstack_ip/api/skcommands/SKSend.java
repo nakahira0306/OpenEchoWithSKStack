@@ -1,5 +1,7 @@
 package com.skyley.skstack_ip.api.skcommands;
 
+import java.io.OutputStream;
+
 import com.skyley.skstack_ip.api.SKUtil;
 
 /**
@@ -11,14 +13,14 @@ public class SKSend extends SKCommand {
 	/** ハンドル番号 */
 	private byte handle;
 	/** 送信データ */
-	private String data;
+	private byte[] data;
 
 	/**
 	 * コンストラクタ
 	 * @param handle ハンドル番号
 	 * @param data 送信データ
 	 */
-	public SKSend(byte handle, String data) {
+	public SKSend(byte handle, byte[] data) {
 		this.handle = handle;
 		this.data = data;
 	}
@@ -32,11 +34,11 @@ public class SKSend extends SKCommand {
 			return false;
 		}
 
-		if (data == null || data == "") {
+		if (data == null) {
 			return false;
 		}
 
-		if (data.length() > 0xFFFF) {
+		if (data.length > 0xFFFF) {
 			return false;
 		}
 
@@ -49,10 +51,20 @@ public class SKSend extends SKCommand {
 	@Override
 	public void buildCommand() {
 		// TODO 自動生成されたメソッド・スタブ
-		String dataLenString;
-
-		dataLenString = SKUtil.toPaddingHexString(data.length(), 4);
-		commandString = "SKSEND " + Integer.toHexString(handle) + " " + dataLenString + " " + data + "\r\n";
+		String lenString = SKUtil.toPaddingHexString(data.length, 4);
+		commandString = "SKSEND " + Integer.toHexString(handle) + " " + lenString + " ";
 	}
 
+	public boolean sendCommand(OutputStream out) {
+		try {
+			byte[] commandByte = commandString.getBytes("US-ASCII");
+			out.write(commandByte);
+			out.write(data);
+			return true;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }

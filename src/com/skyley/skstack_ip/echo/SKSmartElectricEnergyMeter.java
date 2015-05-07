@@ -172,7 +172,7 @@ public class SKSmartElectricEnergyMeter extends SmartElectricEnergyMeter impleme
 	public boolean sendEchoMessage(byte[] data) {
 		// TODO 自動生成されたメソッド・スタブ
 		if (SKUtil.isValidIP6Address(pacIP6Address) && device != null) {
-			return device.sendUDP((byte)1, pacIP6Address, 3610, SKSecOption.SEC_OR_NO_TX, SKUtil.toHexString(data));
+			return device.sendUDP((byte)1, pacIP6Address, 3610, SKSecOption.SEC_OR_NO_TX, data);
 		}
 		else {
 			return false;

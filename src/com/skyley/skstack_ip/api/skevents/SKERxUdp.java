@@ -1,6 +1,5 @@
 package com.skyley.skstack_ip.api.skevents;
 
-import com.skyley.skstack_ip.api.SKUtil;
 import com.skyley.skstack_ip.api.skenums.SKDeviceModel;
 
 /**
@@ -138,7 +137,7 @@ public class SKERxUdp implements SKEvent {
 					isSecured = false;
 				}
 				dataLength = Integer.parseInt(ary[7], 16);
-				data = new String(SKUtil.toAsciiString(ary[8]));
+				data = ary[8];
 			}
 			else {
 				return false;

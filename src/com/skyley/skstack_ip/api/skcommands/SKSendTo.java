@@ -1,9 +1,9 @@
 package com.skyley.skstack_ip.api.skcommands;
 
+import java.io.OutputStream;
+
 import com.skyley.skstack_ip.api.SKUtil;
 import com.skyley.skstack_ip.api.skenums.SKSecOption;
-
-import java.io.OutputStream;
 
 /**
 * SKSENDTOコマンドに対応したクラス、SKCommandを継承
@@ -20,7 +20,7 @@ public class SKSendTo extends SKCommand {
 	/** 暗号化オプション */
 	private SKSecOption sec;
 	/** 送信データ */
-	private String data;
+	private byte[] data;
 
 	/**
 	 * コンストラクタ
@@ -30,7 +30,7 @@ public class SKSendTo extends SKCommand {
 	 * @param sec 暗号化オプション
 	 * @param data 送信データ
 	 */
-	public SKSendTo(byte handle, String ip6Address, int port, SKSecOption sec, String data) {
+	public SKSendTo(byte handle, String ip6Address, int port, SKSecOption sec, byte[] data) {
 		this.handle = handle;
 		this.ip6Address = ip6Address;
 		this.port = port;
@@ -56,7 +56,7 @@ public class SKSendTo extends SKCommand {
 			return false;
 		}
 
-		if (data == null || data == "") {
+		if (data == null) {
 			return false;
 		}
 
@@ -72,7 +72,7 @@ public class SKSendTo extends SKCommand {
 		String portString, lenString;
 
 		portString = SKUtil.toPaddingHexString(port, 4);
-		lenString = SKUtil.toPaddingHexString(data.length()/2, 4);
+		lenString = SKUtil.toPaddingHexString(data.length, 4);
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("SKSENDTO ");
@@ -86,7 +86,7 @@ public class SKSendTo extends SKCommand {
 		sb.append(" ");
 		sb.append(lenString);
 		sb.append(" ");
-		
+
 		//sb.append(data);
 		//sb.append("\r\n");
 		commandString = sb.toString();
@@ -96,7 +96,7 @@ public class SKSendTo extends SKCommand {
 		try {
 			byte[] commandByte = commandString.getBytes("US-ASCII");
 			out.write(commandByte);
-			out.write(SKUtil.toByteArray((data)));
+			out.write(data);
 			return true;
 		}
 		catch(Exception e) {
