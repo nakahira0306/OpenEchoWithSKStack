@@ -28,6 +28,8 @@ public class SKRxBufferReader implements Runnable {
 	private BlockingQueue<String> response;
 	 /** 読み込み処理実行中を示すフラグ */
 	private boolean isRunning;
+	/** デバッグ情報のリスナー */
+	private SKDebugListener debugListener;
 
 	/**
 	 * コンストラクタ
@@ -64,6 +66,21 @@ public class SKRxBufferReader implements Runnable {
 	 */
 	public void removeSKEventListener() {
 		this.listener = null;
+	}
+
+	/**
+	 * デバッグ情報のリスナーを登録
+	 * @param listener デバッグ情報のリスナー、SKDebugListenerを実装したクラス
+	 */
+	public void setSKDebugLIstener(SKDebugListener listener) {
+		debugListener = listener;
+	}
+
+	/**
+	 * デバッグ情報のリスナー登録を解除
+	 */
+	public void removeSKDebugListener() {
+		debugListener = null;
 	}
 
 	/**
@@ -120,6 +137,8 @@ public class SKRxBufferReader implements Runnable {
 				line = buffer.poll(1, TimeUnit.SECONDS);
 				isMatched = false;
 
+				debugOut(line);
+
 				// タイムアウトしたらbuufer.poll()に戻る
 				if (line == null) {
 					continue;
@@ -159,7 +178,7 @@ public class SKRxBufferReader implements Runnable {
 						}
 						else if (listener != null) {
 							SKEventFactory ef = new SKEventFactory();
-							SKEvent event = ef.createSKEvent(type, model, buffer);
+							SKEvent event = ef.createSKEvent(type, model, buffer, debugListener, portString);
 							// イベントとして扱い、文字列を解析できた場合は、listenerに通知
 							if(event.parse(line)) {
 								listener.eventNotified(portString, type, event);
@@ -183,6 +202,16 @@ public class SKRxBufferReader implements Runnable {
 		catch(Exception e) {
 			isRunning = false;
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * デバッグ情報のリスナーが登録されていれば、受信したイベント文字列を通知
+	 * @param line 受信したイベント文字列
+	 */
+	private void debugOut(String line) {
+		if (debugListener != null && line != null) {
+			debugListener.debugOut(portString, line);
 		}
 	}
 }

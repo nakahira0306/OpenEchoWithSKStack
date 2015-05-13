@@ -1,4 +1,5 @@
 package com.skyley.skstack_ip.echo;
+import com.skyley.skstack_ip.api.SKDebugListener;
 import com.skyley.skstack_ip.api.SKDevice;
 import com.skyley.skstack_ip.api.SKUtil;
 import com.skyley.skstack_ip.api.skenums.SKSecOption;
@@ -33,8 +34,9 @@ public class SKSmartElectricEnergyMeter extends SmartElectricEnergyMeter impleme
 	/**
 	 * コンストラクタ、PAAとして動作開始する
 	 * @param port デバイスの接続先シリアルポート名
+	 * @aparam listener デバッグ情報のリスナー
 	 */
-	public SKSmartElectricEnergyMeter(String port) {
+	public SKSmartElectricEnergyMeter(String port, SKDebugListener listener) {
 		device = new SKDevice();
 		if (!device.connect(port)) {
 			System.err.println("SKStack: failed to connect to " + port + ".");
@@ -42,6 +44,11 @@ public class SKSmartElectricEnergyMeter extends SmartElectricEnergyMeter impleme
 		}
 		// SKStackのイベントリスナーを登録
 		device.setSKEventListener(new SKEventListenerForSmartMeter(this));
+
+		// デバッグ情報のリスナーを登録
+		if (listener != null) {
+			device.setSKDebugListener(listener);
+		}
 
 		// SKStackセットアップ
 		device.resetStack();
@@ -53,6 +60,29 @@ public class SKSmartElectricEnergyMeter extends SmartElectricEnergyMeter impleme
 		device.startPAA();
 		// セッション接続状態「接続待ち」
 		status = SKPanaSessionStatus.CONNECT_WAITING;
+	}
+
+	/**
+	 * 登録されているSKDeviceデバッグ情報のリスななーを取得
+	 * @return SKDevieデバッグ情報のリスナー
+	 */
+	public SKDebugListener getSKDebugListener() {
+		return device.getSKDebugListener();
+	}
+
+	/**
+	 * SKDeviceデバッグ情報のリスナーを登録
+	 * @param listener デバッグ情報のリスナー
+	 */
+	public void setSKDebugListener(SKDebugListener listener) {
+		device.setSKDebugListener(listener);
+	}
+
+	/**
+	 * 登録されているSKDeviceデバッグ情報のリスナーを解除
+	 */
+	public void removeSKDebugListener() {
+		device.removeSKDebugListener();
 	}
 
 	/**

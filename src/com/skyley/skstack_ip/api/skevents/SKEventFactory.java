@@ -3,6 +3,7 @@ package com.skyley.skstack_ip.api.skevents;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import com.skyley.skstack_ip.api.SKDebugListener;
 import com.skyley.skstack_ip.api.skenums.SKDeviceModel;
 import com.skyley.skstack_ip.api.skenums.SKEventType;
 
@@ -18,9 +19,12 @@ public class SKEventFactory {
 	 * @param type  イベント種類
 	 * @param model デバイス機種
 	 * @param buffer 受信バッファ
+	 * @param listener デバッグ情報のリスナー
+	 * @param port デバイスの接続先ポート名
 	 * @return SKEventを実装したクラスのインスタンス
 	 */
-	public SKEvent createSKEvent(SKEventType type, SKDeviceModel model, BlockingQueue<String> buffer) {
+	public SKEvent createSKEvent(SKEventType type, SKDeviceModel model, BlockingQueue<String> buffer,
+								 SKDebugListener listener, String port) {
 		String res;
 
 		switch(type) {
@@ -39,6 +43,8 @@ public class SKEventFactory {
 				try {
 					for (int i = 0; i < 6; i++) {
 						res = buffer.poll(1, TimeUnit.SECONDS);
+						debugOut(listener, port, res);
+
 						if (res == null) {
 							return new SKEPanDesc(sb.toString());
 						}
@@ -57,6 +63,7 @@ public class SKEventFactory {
 			case EEDSCAN:
 				try {
 					res = buffer.poll(1, TimeUnit.SECONDS);
+					debugOut(listener, port, res);
 				}
 				catch (InterruptedException e) {
 					return new SKEEdScan("");
@@ -74,6 +81,18 @@ public class SKEventFactory {
 
 			default:
 				return null;
+		}
+	}
+
+	/**
+	 * デバッグ情報のリスナーが登録されていれば、受信した文字列を通知
+	 * @param listener デバッグ情報のリスナー
+	 * @param port デバイスの接続先ポート名
+	 * @param line 受信した文字列
+	 */
+	private void debugOut(SKDebugListener listener, String port, String line) {
+		if (listener != null && line != null) {
+			listener.debugOut(port, line);
 		}
 	}
 

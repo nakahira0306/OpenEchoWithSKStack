@@ -97,6 +97,8 @@ public class SKSendTo extends SKCommand {
 			byte[] commandByte = commandString.getBytes("US-ASCII");
 			out.write(commandByte);
 			out.write(data);
+
+			commandString = commandString + SKUtil.toHexString(data) + "\r\n";
 			return true;
 		}
 		catch(Exception e) {

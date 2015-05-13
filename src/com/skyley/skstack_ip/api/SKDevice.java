@@ -79,6 +79,8 @@ public class SKDevice {
 	private SKReceiver receiver;
 	/** bufferを読み取り、処理するクラス */
 	private SKRxBufferReader reader;
+	/** デバッグ情報のリスナー */
+	private SKDebugListener debugListener;
 
 	/**
 	 * コンストラクタ
@@ -156,6 +158,10 @@ public class SKDevice {
 	 * @param listener SKEventListenerを実装したクラス
 	 */
 	public void setSKEventListener(SKEventListener listener) {
+		if (reader == null) {
+			return;
+		}
+
 		reader.setSKEventListener(listener);
 	}
 
@@ -164,6 +170,35 @@ public class SKDevice {
 	 */
 	public void removeSKEventListner() {
 		reader.removeSKEventListener();
+	}
+
+	/**
+	 * デバイスに登録されているデバッグ情報のリスナーを取得
+	 * @return デバッグ情報のリスナー
+	 */
+	public SKDebugListener getSKDebugListener() {
+		return debugListener;
+	}
+
+	/**
+	 * デバッグ情報のリスナーを登録
+	 * @param listener デバッグ情報のリスナー、SKDebugListenerを実装したクラス
+	 */
+	public void setSKDebugListener(SKDebugListener listener) {
+		if (reader == null) {
+			return;
+		}
+
+		debugListener = listener;
+		reader.setSKDebugLIstener(listener);
+	}
+
+	/**
+	 * デバッグ情報のリスナー登録を解除
+	 */
+	public void removeSKDebugListener() {
+		debugListener = null;
+		reader.removeSKDebugListener();
 	}
 
 	/**
@@ -1269,6 +1304,8 @@ public class SKDevice {
 			sendOK = command.issueCommand(out);
 			out.close();
 
+			debugOut(command);
+
 			if(sendOK) {
 				String[] res = reader.getResponse(1, commandTimeout);
 				if (res == null) {
@@ -1310,7 +1347,7 @@ public class SKDevice {
 			sendOK = command.issueCommand(out);
 			out.close();
 
-			Thread.sleep(0);
+			debugOut(command);
 
 			if(sendOK) {
 				res = reader.getResponse(numOfLine, commandTimeout);
@@ -1323,8 +1360,14 @@ public class SKDevice {
 		catch (IOException e) {
 			return null;
 		}
-		catch (InterruptedException e) {
-			 return null;
+	}
+
+	/**
+	 * デバッグ情報のリスナーが登録されていれば、コマンド文字列を通知
+	 */
+	private void debugOut(SKCommand command) {
+		if (debugListener != null) {
+			debugListener.debugOut(portString, command.getCommandString());
 		}
 	}
 

@@ -14,8 +14,10 @@ public class SKSmartMeterMain {
 	public static void main(String[] args) {
 		// TODO 自動生成されたメソッド・スタブ
 		try {
+			SKDebug debug = new SKDebug();
+
 			// Echoデバイスとして起動
-			SKSmartElectricEnergyMeter skmeter = new SKSmartElectricEnergyMeter("COM3");
+			SKSmartElectricEnergyMeter skmeter = new SKSmartElectricEnergyMeter("COM3", debug);
 			Echo.setSKEchoDevice(skmeter);
 			Echo.start(new DefaultNodeProfile(), new DeviceObject[] {skmeter});
 

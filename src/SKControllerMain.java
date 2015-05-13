@@ -1,5 +1,6 @@
 import java.io.IOException;
 
+import com.skyley.skstack_ip.api.SKDebugListener;
 import com.skyley.skstack_ip.api.SKUtil;
 import com.skyley.skstack_ip.echo.SKController;
 import com.skyley.skstack_ip.echo.SKPanaSessionStatus;
@@ -21,12 +22,13 @@ public class SKControllerMain {
 		SmartElectricEnergyMeter device = null;
 
 		final long WAIT_TIME_MSEC = 1000;
-		final int NUM_OF_REQUESTS = 100;
+		final int NUM_OF_REQUESTS = 10;
 		final long REQUEST_INTERVAL_MSEC = 1000;
 
 		try {
+			SKDebug debug = new SKDebug();
 			// Echoデバイスとして起動、PANAセッション接続を要求
-			SKController skcontroller = new SKController("COM4");
+			SKController skcontroller = new SKController("COM4", debug);
 			while (skcontroller.getPANASessionStatus() == SKPanaSessionStatus.CONNECT_REQUEST) {
 				SKUtil.pause(WAIT_TIME_MSEC);
 			}
@@ -130,5 +132,15 @@ class SmartMeterReceiver extends SmartElectricEnergyMeter.Receiver {
 			EchoProperty property, boolean success) {
 		System.out.println("Cumulative Energy:" + SKUtil.toHexString(property.edt));
 		received = true;
+	}
+}
+
+// SKDceiveのデバッグ情報のリスナー
+class SKDebug implements SKDebugListener {
+
+	@Override
+	public void debugOut(String port, String raw) {
+		// TODO 自動生成されたメソッド・スタブ
+		System.err.println(port + ":" + raw);
 	}
 }

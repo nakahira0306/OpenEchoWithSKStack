@@ -15,6 +15,14 @@ public abstract class SKCommand {
 	protected String commandString;
 
 	/**
+	 * コマンド文字列を取得
+	 * @return コマンド文字列
+	 */
+	public String getCommandString() {
+		return commandString;
+	}
+
+	/**
 	 * 引数チェック<br>
 	 * 具体的な処理は具象クラスが実装
 	 * @return 引数が値域の範囲内:true, 範囲外:false
